@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Scientific Calculator</title>
+    <meta name="description"
+        content="A comprehensive scientific calculator with graphing, unit conversion, and programming calculator capabilities">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Scientific Calculator</h1>
+        </header>
+
+        <!-- Mode Tabs -->
+        <nav class="mode-tabs">
+            <button class="tab-btn active" data-mode="scientific">
+                <span class="tab-icon">🔬</span>
+                <span>Scientific</span>
+            </button>
+            <button class="tab-btn" data-mode="graphing">
+                <span class="tab-icon">📈</span>
+                <span>Graphing</span>
+            </button>
+            <button class="tab-btn" data-mode="programming">
+                <span class="tab-icon">💻</span>
+                <span>Programming</span>
+            </button>
+        </nav>
+
+        <!-- Calculator Display -->
+        <div class="calculator-display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <!-- Mode Panels -->
+        <div class="mode-panels">
+            <!-- Scientific Calculator -->
+            <div class="mode-panel active" id="scientific-panel">
+                <div class="calculator-grid">
+                    <!-- Memory & Mode Row -->
+                    <button class="btn secondary" data-action="rad">RAD</button>
+                    <button class="btn secondary" data-action="mc">MC</button>
+                    <button class="btn secondary" data-action="mr">MR</button>
+                    <button class="btn secondary" data-action="m+">M+</button>
+                    <button class="btn secondary" data-action="m-">M-</button>
+
+                    <!-- Scientific Functions Row 1 -->
+                    <button class="btn function" data-value="sin(">sin</button>
+                    <button class="btn function" data-value="cos(">cos</button>
+                    <button class="btn function" data-value="tan(">tan</button>
+                    <button class="btn function" data-value="log(">log</button>
+                    <button class="btn function" data-value="ln(">ln</button>
+
+                    <!-- Scientific Functions Row 2 -->
+                    <button class="btn function" data-value="asin(">sin⁻¹</button>
+                    <button class="btn function" data-value="acos(">cos⁻¹</button>
+                    <button class="btn function" data-value="atan(">tan⁻¹</button>
+                    <button class="btn function" data-value="10^">10ˣ</button>
+                    <button class="btn function" data-value="antilog(">antilog</button>
+
+                    <!-- Scientific Functions Row 3 -->
+                    <button class="btn function" data-value="sinh(">sinh</button>
+                    <button class="btn function" data-value="cosh(">cosh</button>
+                    <button class="btn function" data-value="tanh(">tanh</button>
+                    <button class="btn function" data-value="sqrt(">√</button>
+                    <button class="btn function" data-value="^">x^y</button>
+
+                    <!-- Scientific Functions Row 4 -->
+                    <button class="btn function" data-value="deriv(">d/dx</button>
+                    <button class="btn function" data-value="integ(">∫</button>
+                    <button class="btn function" data-value="abs(">|x|</button>
+                    <button class="btn function" data-value="!">n!</button>
+                    <button class="btn function" data-value="%">%</button>
+
+                    <!-- Scientific Functions Row 5 -->
+                    <button class="btn function" data-value="π">π</button>
+                    <button class="btn function" data-value="e">e</button>
+                    <button class="btn function" data-value="exp(">exp</button>
+                    <button class="btn function" data-value="^(-1)">x⁻¹</button>
+                    <button class="btn function" data-value="^2">x²</button>
+
+                    <!-- Number Pad & Operations -->
+                    <button class="btn operator" data-value="(">(</button>
+                    <button class="btn operator" data-value=")">)</button>
+                    <button class="btn clear" data-action="clear">C</button>
+                    <button class="btn clear" data-action="backspace">⌫</button>
+                    <button class="btn operator" data-value="/">÷</button>
+
+                    <button class="btn number" data-value="7">7</button>
+                    <button class="btn number" data-value="8">8</button>
+                    <button class="btn number" data-value="9">9</button>
+                    <button class="btn operator" data-value="*">×</button>
+                    <button class="btn function" data-value="^(1/3)">∛</button>
+
+                    <button class="btn number" data-value="4">4</button>
+                    <button class="btn number" data-value="5">5</button>
+                    <button class="btn number" data-value="6">6</button>
+                    <button class="btn operator" data-value="-">−</button>
+                    <button class="btn function" data-value=",">,</button>
+
+                    <button class="btn number" data-value="1">1</button>
+                    <button class="btn number" data-value="2">2</button>
+                    <button class="btn number" data-value="3">3</button>
+                    <button class="btn operator" data-value="+">+</button>
+                    <button class="btn function" data-value="x">x</button>
+
+                    <button class="btn number" data-value="0">0</button>
+                    <button class="btn number" data-value=".">.</button>
+                    <button class="btn number" data-value="00">00</button>
+                    <button class="btn equals" data-action="equals">=</button>
+                    <button class="btn function" data-value="ans">Ans</button>
+                </div>
+            </div>
+
+            <!-- Graphing Calculator -->
+            <div class="mode-panel" id="graphing-panel">
+                <div class="graphing-layout">
+                    <div class="graph-controls">
+                        <div class="control-section">
+                            <label>Graph Type:</label>
+                            <select id="graph-type">
+                                <option value="cartesian">Cartesian (y = f(x))</option>
+                                <option value="parametric">Parametric (x=f(t), y=g(t))</option>
+                                <option value="polar">Polar (r = f(θ))</option>
+                                <option value="implicit">Implicit (f(x,y) = 0)</option>
+                            </select>
+                            <div class="help-text"
+                                style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                                <strong>Usage:</strong> logbase(x,2) • deriv(x^2,x) • integ(sin(x),x,0,3.14)<br>
+                                Scroll to zoom, drag to pan.
+                            </div>
+                        </div>
+
+                        <div class="functions-list" id="functions-list">
+                            <!-- Function inputs will be added dynamically -->
+                        </div>
+
+                        <button class="btn secondary add-function-btn" id="add-function">+ Add Function</button>
+
+                        <div class="control-section range-controls">
+                            <label>X Range:</label>
+                            <div class="range-inputs">
+                                <input type="number" id="x-min" value="-10" step="1">
+                                <span>to</span>
+                                <input type="number" id="x-max" value="10" step="1">
+                            </div>
+                            <label>Y Range:</label>
+                            <div class="range-inputs">
+                                <input type="number" id="y-min" value="-10" step="1">
+                                <span>to</span>
+                                <input type="number" id="y-max" value="10" step="1">
+                            </div>
+                        </div>
+
+                        <div class="graph-actions">
+                            <button class="btn secondary" id="plot-btn">Plot</button>
+                            <button class="btn secondary" id="reset-view-btn">Reset View</button>
+                            <button class="btn secondary" id="export-graph-btn">Export PNG</button>
+                        </div>
+                    </div>
+
+                    <div class="graph-container">
+                        <canvas id="graph-canvas"></canvas>
+                        <div class="graph-info" id="graph-info"></div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Programming Calculator -->
+            <div class="mode-panel" id="programming-panel">
+                <div class="programming-layout">
+                    <div class="base-selector">
+                        <button class="base-btn active" data-base="dec">DEC</button>
+                        <button class="base-btn" data-base="hex">HEX</button>
+                        <button class="base-btn" data-base="oct">OCT</button>
+                        <button class="base-btn" data-base="bin">BIN</button>
+                    </div>
+
+                    <div class="base-displays">
+                        <div class="base-display">
+                            <span class="base-label">HEX</span>
+                            <span class="base-value" id="hex-value">0</span>
+                        </div>
+                        <div class="base-display">
+                            <span class="base-label">DEC</span>
+                            <span class="base-value" id="dec-value">0</span>
+                        </div>
+                        <div class="base-display">
+                            <span class="base-label">OCT</span>
+                            <span class="base-value" id="oct-value">0</span>
+                        </div>
+                        <div class="base-display">
+                            <span class="base-label">BIN</span>
+                            <span class="base-value" id="bin-value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="programming-grid">
+                        <!-- Bitwise Operations -->
+                        <button class="btn operator" data-value="AND">AND</button>
+                        <button class="btn operator" data-value="OR">OR</button>
+                        <button class="btn operator" data-value="XOR">XOR</button>
+                        <button class="btn operator" data-value="NOT">NOT</button>
+                        <button class="btn operator" data-value="<<">
+                            <<< /button>
+
+                                <!-- Hex Digits (A-F) -->
+                                <button class="btn hex-btn" data-value="A">A</button>
+                                <button class="btn hex-btn" data-value="B">B</button>
+                                <button class="btn hex-btn" data-value="C">C</button>
+                                <button class="btn hex-btn" data-value="D">D</button>
+                                <button class="btn operator" data-value=">>">>></button>
+
+                                <button class="btn hex-btn" data-value="E">E</button>
+                                <button class="btn hex-btn" data-value="F">F</button>
+                                <button class="btn clear" data-action="clear">C</button>
+                                <button class="btn clear" data-action="backspace">⌫</button>
+                                <button class="btn operator" data-value="/">/</button>
+
+                                <!-- Number Pad -->
+                                <button class="btn number" data-value="7">7</button>
+                                <button class="btn number" data-value="8">8</button>
+                                <button class="btn number" data-value="9">9</button>
+                                <button class="btn operator" data-value="*">×</button>
+                                <button class="btn operator" data-value="(">(</button>
+
+                                <button class="btn number" data-value="4">4</button>
+                                <button class="btn number" data-value="5">5</button>
+                                <button class="btn number" data-value="6">6</button>
+                                <button class="btn operator" data-value="-">−</button>
+                                <button class="btn operator" data-value=")">)</button>
+
+                                <button class="btn number" data-value="1">1</button>
+                                <button class="btn number" data-value="2">2</button>
+                                <button class="btn number" data-value="3">3</button>
+                                <button class="btn operator" data-value="+">+</button>
+                                <button class="btn equals" data-action="equals">=</button>
+
+                                <button class="btn number wide" data-value="0">0</button>
+                                <button class="btn number" data-value=".">.</button>
+                                <button class="btn operator" data-value="%">%</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Panel (Collapsible) -->
+        <div class="history-panel" id="history-panel">
+            <div class="history-header">
+                <h3>History</h3>
+                <button class="btn secondary clear-history-btn" id="clear-history">Clear</button>
+            </div>
+            <div class="history-list" id="history-list">
+                <!-- History items will be added dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Nerdamer for Symbolic Math -->
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/nerdamer.core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Algebra.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Calculus.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Solve.js"></script>
+
+    <script src="calculator.js"></script>
+    <script src="scientific.js"></script>
+    <script src="graphing.js"></script>
+    <script src="programming.js"></script>
+</body>
+
+</html>

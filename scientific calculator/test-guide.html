@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Enhanced Graphing Calculator</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #60a5fa;
+        }
+
+        .example {
+            background: #334155;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        code {
+            color: #fbbf24;
+            background: #1e293b;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📈 Enhanced Graphing Calculator - Feature Guide</h1>
+
+    <div class="test-section">
+        <h2>1. Custom Base Logarithms</h2>
+        <p>You can now use logarithms with any base using the syntax: <code>logbase(x, base)</code></p>
+        <div class="example">
+            <strong>Examples:</strong>
+            <ul>
+                <li><code>logbase(x, 2)</code> - Binary (base-2) logarithm</li>
+                <li><code>logbase(x, e)</code> - Natural logarithm (same as ln(x))</li>
+                <li><code>logbase(x, 10)</code> - Common logarithm (same as log(x))</li>
+                <li><code>logbase(x*x, 3)</code> - Base-3 logarithm of x²</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Antilog Functions</h2>
+        <p>Calculate antilog (inverse logarithm) with: <code>antilog(x)</code> or <code>antilog(x, base)</code></p>
+        <div class="example">
+            <strong>Examples:</strong>
+            <ul>
+                <li><code>antilog(x)</code> - 10^x (default base 10)</li>
+                <li><code>antilog(x, 2)</code> - 2^x (base-2 antilog)</li>
+                <li><code>antilog(x, e)</code> - e^x (same as exp(x))</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Derivatives</h2>
+        <p>Plot derivatives of functions using: <code>deriv(expression, variable)</code></p>
+        <div class="example">
+            <strong>Examples:</strong>
+            <ul>
+                <li><code>deriv(x^2, x)</code> - Derivative of x² (should show 2x)</li>
+                <li><code>deriv(sin(x), x)</code> - Derivative of sin(x) (should show cos(x))</li>
+                <li><code>deriv(x^3 - 2*x, x)</code> - Derivative of x³ - 2x</li>
+                <li><code>deriv(ln(x), x)</code> - Derivative of ln(x) (should show 1/x)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Integrals</h2>
+        <p>Graph definite integrals (constant) using: <code>integ(expression, variable, start, end)</code></p>
+        <div class="example">
+            <strong>Examples:</strong>
+            <ul>
+                <li><code>integ(x^2, x, 0, 2)</code> - Integral of x² from 0 to 2</li>
+                <li><code>integ(sin(x), x, 0, 3.14159)</code> - Integral of sin(x) from 0 to π</li>
+                <li><code>integ(1/x, x, 1, x)</code> - Variable upper limit (creates ln(x) graph)</li>
+            </ul>
+            <p><em>Note: For definite integrals with constants, the result is a horizontal line.</em></p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Combined Examples</h2>
+        <div class="example">
+            <strong>Complex expressions:</strong>
+            <ul>
+                <li><code>deriv(logbase(x, 2), x)</code> - Derivative of log₂(x)</li>
+                <li><code>sin(x) + deriv(sin(x), x)</code> - Plot sin(x) + cos(x)</li>
+                <li><code>antilog(x, 2) - logbase(antilog(x, 2), 2)</code> - Should equal 0</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Instructions</h2>
+        <ol>
+            <li>Open the main calculator (index.html)</li>
+            <li>Go to the <strong>Graphing</strong> tab</li>
+            <li>Try entering the examples above in the function input field</li>
+            <li>Click <strong>Plot</strong> or wait for auto-plot</li>
+            <li>Use scroll wheel to zoom, drag to pan</li>
+            <li>Test multiple functions with different colors</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Quick Links</h2>
+        <p><a href="index.html" style="color: #60a5fa;">Open Scientific Calculator</a></p>
+    </div>
+</body>
+
+</html>
