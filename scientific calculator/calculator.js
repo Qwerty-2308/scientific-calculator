@@ -100,21 +100,22 @@ class CalculatorController {
         if (!this.expression) return; // Keep this check to prevent empty calculations
 
         try {
-            this.addToHistory(this.expression); // Use this.expression as currentExpression
-
-            const result = this.evaluateExpression(this.expression);
+            const currentExpression = this.expression; // Save expression before it's potentially cleared
+            const result = this.evaluateExpression(currentExpression);
+            let finalResult;
 
             // Check if result is a string (symbolic) or number
             if (typeof result === 'string') {
                 // Symbolic result - display as is
-                this.result = result;
-                this.updateDisplay();
+                finalResult = result;
             } else {
                 // Numerical result - format it
-                const formatted = this.formatResult(result);
-                this.result = formatted;
-                this.updateDisplay();
+                finalResult = this.formatResult(result);
             }
+
+            this.result = finalResult;
+            this.updateDisplay();
+            this.addToHistory(currentExpression, finalResult); // Call history after result is finalized
 
             this.isNewCalculation = true;
         } catch (error) {
