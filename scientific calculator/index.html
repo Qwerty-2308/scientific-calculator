@@ -29,6 +29,10 @@
                 <span class="tab-icon">📈</span>
                 <span>Graphing</span>
             </button>
+            <button class="tab-btn" data-mode="converter">
+                <span class="tab-icon">🔄</span>
+                <span>Converter</span>
+            </button>
             <button class="tab-btn" data-mode="programming">
                 <span class="tab-icon">💻</span>
                 <span>Programming</span>
@@ -123,59 +127,52 @@
 
             <!-- Graphing Calculator -->
             <div class="mode-panel" id="graphing-panel">
-                <div class="graphing-layout">
-                    <div class="graph-controls">
-                        <div class="control-section">
-                            <label>Graph Type:</label>
-                            <select id="graph-type">
-                                <option value="cartesian">Cartesian (y = f(x))</option>
-                                <option value="parametric">Parametric (x=f(t), y=g(t))</option>
-                                <option value="polar">Polar (r = f(θ))</option>
-                                <option value="implicit">Implicit (f(x,y) = 0)</option>
-                            </select>
-                            <div class="help-text"
-                                style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
-                                <strong>Usage:</strong> logbase(x,2) • deriv(x^2,x) • integ(sin(x),x,0,3.14)<br>
-                                Scroll to zoom, drag to pan.
-                            </div>
-                        </div>
-
+                <div class="desmos-layout">
+                    <div class="functions-panel">
                         <div class="functions-list" id="functions-list">
                             <!-- Function inputs will be added dynamically -->
                         </div>
-
-                        <button class="btn secondary add-function-btn" id="add-function">+ Add Function</button>
-
-                        <div class="control-section range-controls">
-                            <label>X Range:</label>
-                            <div class="range-inputs">
-                                <input type="number" id="x-min" value="-10" step="1">
-                                <span>to</span>
-                                <input type="number" id="x-max" value="10" step="1">
-                            </div>
-                            <label>Y Range:</label>
-                            <div class="range-inputs">
-                                <input type="number" id="y-min" value="-10" step="1">
-                                <span>to</span>
-                                <input type="number" id="y-max" value="10" step="1">
-                            </div>
-                        </div>
-
-                        <div class="graph-actions">
-                            <button class="btn secondary" id="plot-btn">Plot</button>
-                            <button class="btn secondary" id="reset-view-btn">Reset View</button>
-                            <button class="btn secondary" id="export-graph-btn">Export PNG</button>
-                        </div>
+                        <button class="btn-add-function" id="add-function">+ Add Expression</button>
+                        <button class="btn-reset-view" id="reset-view-btn">⌂ Reset View</button>
                     </div>
 
-                    <div class="graph-container">
+                    <div class="graph-canvas-wrapper">
                         <canvas id="graph-canvas"></canvas>
-                        <div class="graph-info" id="graph-info"></div>
+                        <div class="graph-coordinates" id="graph-info"></div>
                     </div>
                 </div>
             </div>
 
-
+            <!-- Unit Converter -->
+            <div class="mode-panel" id="converter-panel">
+                <div class="converter-layout">
+                    <div class="converter-category">
+                        <label for="category-select">Category:</label>
+                        <select id="category-select">
+                            <option value="length">Length</option>
+                            <option value="weight">Weight/Mass</option>
+                            <option value="temperature">Temperature</option>
+                        </select>
+                    </div>
+                    <div class="converter-inputs">
+                        <div class="conversion-item">
+                            <div class="input-group">
+                                <input type="number" id="input-value" value="1">
+                                <select id="from-unit"></select>
+                            </div>
+                        </div>
+                        <div class="conversion-arrow">⇄</div>
+                        <div class="conversion-item">
+                            <div class="input-group">
+                                <input type="number" id="output-value" readonly>
+                                <select id="to-unit"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="text-align: center; color: var(--text-muted); margin-top: 2em;">Converter functionality is
+                        under construction.</p>
+                </div>
+            </div>
 
             <!-- Programming Calculator -->
             <div class="mode-panel" id="programming-panel">
@@ -212,44 +209,43 @@
                         <button class="btn operator" data-value="OR">OR</button>
                         <button class="btn operator" data-value="XOR">XOR</button>
                         <button class="btn operator" data-value="NOT">NOT</button>
-                        <button class="btn operator" data-value="<<">
-                            <<< /button>
+                        <button class="btn operator" data-value="<<">&lt;&lt;</button>
 
-                                <!-- Hex Digits (A-F) -->
-                                <button class="btn hex-btn" data-value="A">A</button>
-                                <button class="btn hex-btn" data-value="B">B</button>
-                                <button class="btn hex-btn" data-value="C">C</button>
-                                <button class="btn hex-btn" data-value="D">D</button>
-                                <button class="btn operator" data-value=">>">>></button>
+                        <!-- Hex Digits (A-F) -->
+                        <button class="btn hex-btn" data-value="A">A</button>
+                        <button class="btn hex-btn" data-value="B">B</button>
+                        <button class="btn hex-btn" data-value="C">C</button>
+                        <button class="btn hex-btn" data-value="D">D</button>
+                        <button class="btn operator" data-value=">>">>></button>
 
-                                <button class="btn hex-btn" data-value="E">E</button>
-                                <button class="btn hex-btn" data-value="F">F</button>
-                                <button class="btn clear" data-action="clear">C</button>
-                                <button class="btn clear" data-action="backspace">⌫</button>
-                                <button class="btn operator" data-value="/">/</button>
+                        <button class="btn hex-btn" data-value="E">E</button>
+                        <button class="btn hex-btn" data-value="F">F</button>
+                        <button class="btn clear" data-action="clear">C</button>
+                        <button class="btn clear" data-action="backspace">⌫</button>
+                        <button class="btn operator" data-value="/">/</button>
 
-                                <!-- Number Pad -->
-                                <button class="btn number" data-value="7">7</button>
-                                <button class="btn number" data-value="8">8</button>
-                                <button class="btn number" data-value="9">9</button>
-                                <button class="btn operator" data-value="*">×</button>
-                                <button class="btn operator" data-value="(">(</button>
+                        <!-- Number Pad -->
+                        <button class="btn number" data-value="7">7</button>
+                        <button class="btn number" data-value="8">8</button>
+                        <button class="btn number" data-value="9">9</button>
+                        <button class="btn operator" data-value="*">×</button>
+                        <button class="btn operator" data-value="(">(</button>
 
-                                <button class="btn number" data-value="4">4</button>
-                                <button class="btn number" data-value="5">5</button>
-                                <button class="btn number" data-value="6">6</button>
-                                <button class="btn operator" data-value="-">−</button>
-                                <button class="btn operator" data-value=")">)</button>
+                        <button class="btn number" data-value="4">4</button>
+                        <button class="btn number" data-value="5">5</button>
+                        <button class="btn number" data-value="6">6</button>
+                        <button class="btn operator" data-value="-">−</button>
+                        <button class="btn operator" data-value=")">)</button>
 
-                                <button class="btn number" data-value="1">1</button>
-                                <button class="btn number" data-value="2">2</button>
-                                <button class="btn number" data-value="3">3</button>
-                                <button class="btn operator" data-value="+">+</button>
-                                <button class="btn equals" data-action="equals">=</button>
+                        <button class="btn number" data-value="1">1</button>
+                        <button class="btn number" data-value="2">2</button>
+                        <button class="btn number" data-value="3">3</button>
+                        <button class="btn operator" data-value="+">+</button>
+                        <button class="btn equals" data-action="equals">=</button>
 
-                                <button class="btn number wide" data-value="0">0</button>
-                                <button class="btn number" data-value=".">.</button>
-                                <button class="btn operator" data-value="%">%</button>
+                        <button class="btn number wide" data-value="0">0</button>
+                        <button class="btn number" data-value=".">.</button>
+                        <button class="btn operator" data-value="%">%</button>
                     </div>
                 </div>
             </div>
@@ -276,6 +272,7 @@
     <script src="calculator.js"></script>
     <script src="scientific.js"></script>
     <script src="graphing.js"></script>
+    <script src="converter.js"></script>
     <script src="programming.js"></script>
 </body>
 
