@@ -27,7 +27,6 @@ class GraphingCalculator {
         this.setupMouseInteraction();
         this.setupResizeObserver();
         this.addFunction(); // Add initial function input
-        this.loadExamples();
 
         // Initial resize
         this.resize();
@@ -61,43 +60,13 @@ class GraphingCalculator {
     }
 
     setupControls() {
-        // Graph type selector
-        document.getElementById('graph-type').addEventListener('change', (e) => {
-            this.graphType = e.target.value;
-            this.updateFunctionInputs();
-            this.plot();
-        });
-
-        // Range controls
-        const rangeInputs = ['x-min', 'x-max', 'y-min', 'y-max'];
-        rangeInputs.forEach(id => {
-            document.getElementById(id).addEventListener('change', (e) => {
-                const val = parseFloat(e.target.value);
-                if (!isNaN(val)) {
-                    if (id === 'x-min') this.xMin = val;
-                    if (id === 'x-max') this.xMax = val;
-                    if (id === 'y-min') this.yMin = val;
-                    if (id === 'y-max') this.yMax = val;
-                    this.plot();
-                }
-            });
-        });
-
         // Action buttons
         document.getElementById('add-function').addEventListener('click', () => {
             this.addFunction();
         });
 
-        document.getElementById('plot-btn').addEventListener('click', () => {
-            this.plot();
-        });
-
         document.getElementById('reset-view-btn').addEventListener('click', () => {
             this.resetView();
-        });
-
-        document.getElementById('export-graph-btn').addEventListener('click', () => {
-            this.exportGraph();
         });
     }
 
@@ -188,20 +157,7 @@ class GraphingCalculator {
     }
 
     getFunctionPlaceholder() {
-        const placeholders = {
-            cartesian: 'e.g., sin(x), x^2, logbase(x,2), deriv(x^2,x)',
-            parametric: 'x: cos(t), y: sin(t)',
-            polar: 'e.g., 1 + sin(θ), 2*cos(3*θ)',
-            implicit: 'e.g., x^2 + y^2 - 1'
-        };
-        return placeholders[this.graphType] || '';
-    }
-
-    updateFunctionInputs() {
-        const inputs = document.querySelectorAll('.function-input');
-        inputs.forEach(input => {
-            input.placeholder = this.getFunctionPlaceholder();
-        });
+        return 'e.g., sin(x), x^2, sqrt(x)';
     }
 
     zoomGraph(factor) {
@@ -215,7 +171,6 @@ class GraphingCalculator {
         this.yMin = yCenter - yRange;
         this.yMax = yCenter + yRange;
 
-        this.updateRangeInputs();
         this.plot();
     }
 
@@ -230,15 +185,7 @@ class GraphingCalculator {
         this.yMin += yShift;
         this.yMax += yShift;
 
-        this.updateRangeInputs();
         this.plot();
-    }
-
-    updateRangeInputs() {
-        document.getElementById('x-min').value = this.xMin.toFixed(2);
-        document.getElementById('x-max').value = this.xMax.toFixed(2);
-        document.getElementById('y-min').value = this.yMin.toFixed(2);
-        document.getElementById('y-max').value = this.yMax.toFixed(2);
     }
 
     updateCursorInfo(e) {
@@ -252,7 +199,6 @@ class GraphingCalculator {
         this.xMax = 10;
         this.yMin = -10;
         this.yMax = 10;
-        this.updateRangeInputs();
         this.plot();
     }
 
@@ -271,20 +217,7 @@ class GraphingCalculator {
                 this.ctx.lineWidth = 2;
 
                 try {
-                    switch (this.graphType) {
-                        case 'cartesian':
-                            this.plotCartesian(func.expression);
-                            break;
-                        case 'parametric':
-                            this.plotParametric(func.expression);
-                            break;
-                        case 'polar':
-                            this.plotPolar(func.expression);
-                            break;
-                        case 'implicit':
-                            this.plotImplicit(func.expression);
-                            break;
-                    }
+                    this.plotCartesian(func.expression);
                 } catch (error) {
                     console.warn(`Error plotting function ${index}:`, error);
                 }
@@ -293,12 +226,12 @@ class GraphingCalculator {
     }
 
     clearCanvas() {
-        this.ctx.fillStyle = '#141B3A';
+        this.ctx.fillStyle = '#ffffff';
         this.ctx.fillRect(0, 0, this.canvasSize, this.canvasSize);
     }
 
     drawGrid() {
-        this.ctx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
+        this.ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
         this.ctx.lineWidth = 1;
 
         const xStep = this.getGridStep(this.xMax - this.xMin);
@@ -362,7 +295,7 @@ class GraphingCalculator {
     }
 
     drawAxisLabels() {
-        this.ctx.fillStyle = '#94a3b8';
+        this.ctx.fillStyle = '#666';
         this.ctx.font = '12px Inter';
         this.ctx.textAlign = 'center';
 
@@ -427,114 +360,13 @@ class GraphingCalculator {
         this.ctx.stroke();
     }
 
-    plotParametric(expressions) {
-        const parts = expressions.split(',').map(s => s.trim());
-        if (parts.length < 2) return;
-
-        const xExpr = parts[0].replace(/^x\s*[:=]\s*/i, '');
-        const yExpr = parts[1].replace(/^y\s*[:=]\s*/i, '');
-
-        const samples = 1000;
-        const tMin = -10;
-        const tMax = 10;
-        const step = (tMax - tMin) / samples;
-
-        this.ctx.beginPath();
-        let started = false;
-
-        for (let i = 0; i <= samples; i++) {
-            const t = tMin + i * step;
-            try {
-                const x = this.evaluateExpression(xExpr, { t });
-                const y = this.evaluateExpression(yExpr, { t });
-
-                if (isFinite(x) && isFinite(y)) {
-                    const screenX = this.worldToScreenX(x);
-                    const screenY = this.worldToScreenY(y);
-
-                    if (!started) {
-                        this.ctx.moveTo(screenX, screenY);
-                        started = true;
-                    } else {
-                        this.ctx.lineTo(screenX, screenY);
-                    }
-                } else {
-                    started = false;
-                }
-            } catch (e) {
-                started = false;
-            }
-        }
-
-        this.ctx.stroke();
-    }
-
-    plotPolar(expression) {
-        const samples = 1000;
-        const thetaMax = 4 * Math.PI;
-        const step = thetaMax / samples;
-
-        this.ctx.beginPath();
-        let started = false;
-
-        for (let i = 0; i <= samples; i++) {
-            const theta = i * step;
-            try {
-                const r = this.evaluateExpression(expression, { θ: theta, theta });
-
-                if (isFinite(r)) {
-                    const x = r * Math.cos(theta);
-                    const y = r * Math.sin(theta);
-
-                    const screenX = this.worldToScreenX(x);
-                    const screenY = this.worldToScreenY(y);
-
-                    if (!started) {
-                        this.ctx.moveTo(screenX, screenY);
-                        started = true;
-                    } else {
-                        this.ctx.lineTo(screenX, screenY);
-                    }
-                } else {
-                    started = false;
-                }
-            } catch (e) {
-                started = false;
-            }
-        }
-
-        this.ctx.stroke();
-    }
-
-    plotImplicit(expression) {
-        const resolution = 150; // Reduced for performance
-        const xStep = (this.xMax - this.xMin) / resolution;
-        const yStep = (this.yMax - this.yMin) / resolution;
-        const threshold = 0.1; // Adjust based on zoom?
-
-        this.ctx.fillStyle = this.ctx.strokeStyle;
-
-        for (let i = 0; i < resolution; i++) {
-            for (let j = 0; j < resolution; j++) {
-                const x = this.xMin + i * xStep;
-                const y = this.yMin + j * yStep;
-
-                try {
-                    const value = this.evaluateExpression(expression, { x, y });
-
-                    if (Math.abs(value) < threshold) {
-                        const screenX = this.worldToScreenX(x);
-                        const screenY = this.worldToScreenY(y);
-                        this.ctx.fillRect(screenX - 1, screenY - 1, 2, 2);
-                    }
-                } catch (e) {
-                    // Continue
-                }
-            }
-        }
-    }
-
     evaluateExpression(expr, variables) {
+        // Check for piecewise function syntax: {condition: expr, condition: expr, ...}
+        const piecewiseMatch = expr.trim().match(/^\{(.+)\}$/);
+        if (piecewiseMatch) {
+            return this.evaluatePiecewise(piecewiseMatch[1], variables);
+        }
+
         // Replace variables
         let processed = expr;
         for (const [key, value] of Object.entries(variables)) {
@@ -543,43 +375,12 @@ class GraphingCalculator {
             processed = processed.replace(regex, `(${value})`);
         }
 
-        // Handle custom functions first (before simple replacements)
-        // logbase(x, base) -> log(x) / log(base)
+        // Handle logbase(x, base) -> log(x) / log(base)
         processed = processed.replace(/logbase\(([^,]+),\s*([^)]+)\)/g, (match, x, base) => {
             return `(Math.log(${x}) / Math.log(${base}))`;
         });
 
-        // antilog(x, base) -> base^x (default base 10)
-        processed = processed.replace(/antilog\(([^,]+),\s*([^)]+)\)/g, (match, x, base) => {
-            return `(Math.pow(${base}, ${x}))`;
-        });
-        processed = processed.replace(/antilog\(([^)]+)\)/g, (match, x) => {
-            return `(Math.pow(10, ${x}))`;
-        });
-
-        // Handle derivatives - numerical approximation using central difference
-        // deriv(expression, var) -> derivative at current point
-        // This needs special handling as we're evaluating for a specific variable value
-        processed = processed.replace(/deriv\(([^,]+),\s*([^)]+)\)/g, (match, funcExpr, variable) => {
-            // For graphing, we compute numerical derivative at the current point
-            const h = 0.0001;
-            const varName = variable.trim();
-
-            // We'll create a derivative function inline
-            // This is tricky because we need to evaluate the inner function
-            // Let's use a helper function for this
-            return `this.numericDerivative('${funcExpr}', '${varName}', ${varName})`;
-        });
-
-        // Handle integrals - numerical approximation using Simpson's rule
-        // integ(expression, var, start, end) -> definite integral
-        processed = processed.replace(/integ\(([^,]+),\s*([^,]+),\s*([^,]+),\s*([^)]+)\)/g,
-            (match, funcExpr, variable, start, end) => {
-                return `this.numericIntegral('${funcExpr}', '${variable.trim()}', ${start}, ${end})`;
-            });
-
         // Replace math functions and constants
-        // Order matters: longer names first to avoid partial replacement
         const replacements = [
             { s: 'sinh', r: 'Math.sinh' },
             { s: 'cosh', r: 'Math.cosh' },
@@ -611,101 +412,71 @@ class GraphingCalculator {
         // Handle power operator
         processed = processed.replace(/\^/g, '**');
 
-        // Evaluate safely with helper functions bound
-        const func = new Function('Math', 'helpers', `"use strict"; 
-            const numericDerivative = helpers.numericDerivative;
-            const numericIntegral = helpers.numericIntegral;
-            return (${processed});`);
-        return func(Math, {
-            numericDerivative: this.numericDerivative.bind(this),
-            numericIntegral: this.numericIntegral.bind(this)
-        });
-    }
-
-    // Numerical derivative using central difference method
-    numericDerivative(funcExpr, varName, atValue) {
-        const h = 0.0001;
-        const evalAtPoint = (val) => {
-            try {
-                const vars = {};
-                vars[varName] = val;
-                return this.evaluateSimple(funcExpr, vars);
-            } catch (e) {
-                return NaN;
-            }
-        };
-
-        const f_plus = evalAtPoint(atValue + h);
-        const f_minus = evalAtPoint(atValue - h);
-        return (f_plus - f_minus) / (2 * h);
-    }
-
-    // Numerical integration using Simpson's rule
-    numericIntegral(funcExpr, varName, start, end) {
-        const n = 100; // Number of intervals (must be even)
-        const h = (end - start) / n;
-
-        const evalAtPoint = (val) => {
-            try {
-                const vars = {};
-                vars[varName] = val;
-                return this.evaluateSimple(funcExpr, vars);
-            } catch (e) {
-                return NaN;
-            }
-        };
-
-        let sum = evalAtPoint(start) + evalAtPoint(end);
-
-        for (let i = 1; i < n; i++) {
-            const x = start + i * h;
-            const weight = i % 2 === 0 ? 2 : 4;
-            sum += weight * evalAtPoint(x);
-        }
-
-        return (sum * h) / 3;
-    }
-
-    // Simplified expression evaluator for derivative/integral inner functions
-    evaluateSimple(expr, variables) {
-        let processed = expr;
-
-        // Replace variables
-        for (const [key, value] of Object.entries(variables)) {
-            const regex = new RegExp(`\\b${key}\\b`, 'g');
-            processed = processed.replace(regex, `(${value})`);
-        }
-
-        // Replace common math functions
-        const simpleReplacements = [
-            { s: 'sinh', r: 'Math.sinh' },
-            { s: 'cosh', r: 'Math.cosh' },
-            { s: 'tanh', r: 'Math.tanh' },
-            { s: 'asin', r: 'Math.asin' },
-            { s: 'acos', r: 'Math.acos' },
-            { s: 'atan', r: 'Math.atan' },
-            { s: 'sin', r: 'Math.sin' },
-            { s: 'cos', r: 'Math.cos' },
-            { s: 'tan', r: 'Math.tan' },
-            { s: 'sqrt', r: 'Math.sqrt' },
-            { s: 'abs', r: 'Math.abs' },
-            { s: 'log', r: 'Math.log10' },
-            { s: 'ln', r: 'Math.log' },
-            { s: 'exp', r: 'Math.exp' },
-            { s: 'π', r: 'Math.PI' },
-            { s: 'pi', r: 'Math.PI' },
-            { s: 'e', r: 'Math.E' }
-        ];
-
-        simpleReplacements.forEach(({ s, r }) => {
-            const regex = new RegExp(`\\b${s}\\b`, 'g');
-            processed = processed.replace(regex, r);
-        });
-
-        processed = processed.replace(/\^/g, '**');
-
+        // Evaluate safely
         const func = new Function('Math', `"use strict"; return (${processed});`);
         return func(Math);
+    }
+
+    evaluatePiecewise(piecewiseContent, variables) {
+        // Parse piecewise function: "x<0: -x, x>=0: x" or "x<0: -x, else: x"
+        const parts = this.splitPiecewise(piecewiseContent);
+
+        for (const part of parts) {
+            const colonIndex = part.indexOf(':');
+            if (colonIndex === -1) continue;
+
+            const condition = part.substring(0, colonIndex).trim();
+            const expression = part.substring(colonIndex + 1).trim();
+
+            // Handle "else" or "otherwise" as default case
+            if (condition === 'else' || condition === 'otherwise' || condition === 'true') {
+                return this.evaluateExpression(expression, variables);
+            }
+
+            // Evaluate condition
+            try {
+                const conditionResult = this.evaluateExpression(condition, variables);
+                if (conditionResult) {
+                    return this.evaluateExpression(expression, variables);
+                }
+            } catch (e) {
+                // If condition evaluation fails, skip this piece
+                continue;
+            }
+        }
+
+        // If no condition matched, return NaN
+        return NaN;
+    }
+
+    splitPiecewise(content) {
+        // Split by comma, but be careful of nested function calls
+        const parts = [];
+        let current = '';
+        let depth = 0;
+
+        for (let i = 0; i < content.length; i++) {
+            const char = content[i];
+
+            if (char === '(' || char === '{') {
+                depth++;
+                current += char;
+            } else if (char === ')' || char === '}') {
+                depth--;
+                current += char;
+            } else if (char === ',' && depth === 0) {
+                parts.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+
+        if (current.trim()) {
+            parts.push(current.trim());
+        }
+
+        return parts;
     }
 
     worldToScreenX(x) {
@@ -722,25 +493,6 @@ class GraphingCalculator {
 
     screenToWorldY(screenY) {
         return this.yMin + ((this.canvasSize - screenY) / this.canvasSize) * (this.yMax - this.yMin);
-    }
-
-    exportGraph() {
-        const link = document.createElement('a');
-        link.download = 'graph.png';
-        link.href = this.canvas.toDataURL();
-        link.click();
-    }
-
-    loadExamples() {
-        // Pre-populate with an example function
-        setTimeout(() => {
-            const firstInput = document.querySelector('.function-input');
-            if (firstInput) {
-                firstInput.value = 'sin(x)';
-                this.functions[0].expression = 'sin(x)';
-                this.plot();
-            }
-        }, 100);
     }
 }
 
